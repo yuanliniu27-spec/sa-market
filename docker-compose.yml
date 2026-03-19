@@ -1,0 +1,90 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: samarket_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: samarket
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - samarket
+
+  redis:
+    image: redis:7-alpine
+    container_name: samarket_redis
+    ports:
+      - "6379:6379"
+    networks:
+      - samarket
+
+  minio:
+    image: minio/minio:latest
+    container_name: samarket_minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    networks:
+      - samarket
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: samarket_backend
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/samarket
+      - REDIS_URL=redis://redis:6379/0
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin
+      - MINIO_BUCKET=sa-market
+      - MINIO_SECURE=false
+    depends_on:
+      - postgres
+      - redis
+      - minio
+    networks:
+      - samarket
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: samarket_frontend
+    command: npm start
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - REACT_APP_API_URL=http://localhost:8000
+    depends_on:
+      - backend
+    networks:
+      - samarket
+
+volumes:
+  postgres_data:
+  minio_data:
+
+networks:
+  samarket:
+    driver: bridge

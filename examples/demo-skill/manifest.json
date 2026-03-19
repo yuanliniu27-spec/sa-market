@@ -1,0 +1,33 @@
+{
+  "type": "skill",
+  "skill_id": "customer-intent-demo",
+  "name": "客户意向分析演示",
+  "version": "1.0.0",
+  "description": "这是一个演示用的客户意向分析 Skill，用于展示 SA Market 的完整功能",
+  "category": "客户管理",
+  "tags": ["Demo", "CRM", "AI"],
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "customer_id": {
+        "type": "string",
+        "description": "客户ID"
+      }
+    },
+    "required": ["customer_id"]
+  },
+  "output_schema": {
+    "type": "object",
+    "properties": {
+      "intent_score": {
+        "type": "integer",
+        "description": "意向度分数 (0-100)"
+      }
+    }
+  },
+  "author": {
+    "name": "Demo User",
+    "email": "demo@lixiang.com",
+    "department": "市场营销-营销系统"
+  }
+}

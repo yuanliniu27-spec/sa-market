@@ -1,0 +1,1394 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SA Market - 智能销售创新平台</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* 导航栏 */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: #ffffff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 48px;
+            z-index: 1000;
+        }
+
+        .navbar-logo {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1890ff;
+            text-decoration: none;
+        }
+
+        .navbar-menu {
+            display: flex;
+            gap: 8px;
+            list-style: none;
+        }
+
+        .navbar-menu a {
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .navbar-menu a:hover {
+            color: #1890ff;
+            background: #f0f5ff;
+        }
+
+        .navbar-menu a.active {
+            color: #1890ff;
+            background: #e6f7ff;
+            font-weight: 500;
+        }
+
+        .navbar-login {
+            padding: 8px 20px;
+            background: #1890ff;
+            border-radius: 4px;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .navbar-login:hover {
+            background: #40a9ff;
+        }
+
+        /* Tab 内容容器 */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Banner 区域 */
+        .banner {
+            margin-top: 64px;
+            padding: 80px 48px 60px;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .banner h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .banner-subtitle {
+            font-size: 20px;
+            margin-bottom: 8px;
+            opacity: 0.95;
+        }
+
+        .banner-slogan {
+            font-size: 16px;
+            opacity: 0.85;
+            letter-spacing: 1px;
+        }
+
+        /* 滚动文字区域 */
+        .scrolling-text {
+            background: #ffffff;
+            border-top: 1px solid #e8e8e8;
+            border-bottom: 1px solid #e8e8e8;
+            padding: 32px 0;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+        }
+
+        .scrolling-container {
+            max-width: 1200px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .scrolling-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+            animation: scroll 60s linear infinite;
+        }
+
+        .scrolling-row:last-child {
+            margin-bottom: 0;
+        }
+
+        /* 为三行设置不同的滚动速度以增加视觉层次感 */
+        .scrolling-row:nth-child(1) {
+            animation-duration: 60s;
+        }
+
+        .scrolling-row:nth-child(2) {
+            animation-duration: 65s;
+            animation-direction: reverse;
+        }
+
+        .scrolling-row:nth-child(3) {
+            animation-duration: 70s;
+        }
+
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .scrolling-tag {
+            display: inline-block;
+            padding: 8px 20px;
+            background: #f5f7fa;
+            border: 1px solid #e8e8e8;
+            border-radius: 20px;
+            font-size: 13px;
+            color: #666;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+
+        .scrolling-tag:hover {
+            background: #e6f7ff;
+            border-color: #1890ff;
+            color: #1890ff;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(24, 144, 255, 0.2);
+        }
+
+        .scrolling-tag:active {
+            transform: translateY(0);
+        }
+
+        /* 主容器 */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 60px 48px;
+        }
+
+        /* 分类标题 */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .section-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .section-subtitle {
+            font-size: 14px;
+            color: #999;
+            margin-top: 8px;
+        }
+
+        .view-all {
+            color: #1890ff;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .view-all:hover {
+            color: #40a9ff;
+        }
+
+        /* 应用卡片网格 */
+        .apps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+            margin-bottom: 80px;
+        }
+
+        .app-card {
+            background: #ffffff;
+            border: 1px solid #e8e8e8;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .app-card:hover {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            transform: translateY(-4px);
+            border-color: #1890ff;
+        }
+
+        .app-card-content {
+            padding: 24px;
+        }
+
+        .app-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .app-card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .app-card-type {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .app-card-icon {
+            font-size: 32px;
+        }
+
+        .app-card-desc {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 16px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .app-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 16px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .app-card-author {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .app-card-stats {
+            display: flex;
+            gap: 16px;
+            font-size: 12px;
+            color: #999;
+        }
+
+        /* 收藏区域 */
+        .collection-section {
+            background: #ffffff;
+            border: 1px solid #e8e8e8;
+            border-radius: 16px;
+            padding: 48px;
+            text-align: center;
+        }
+
+        .collection-icon {
+            font-size: 48px;
+            margin-bottom: 24px;
+        }
+
+        .collection-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .collection-desc {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 24px;
+        }
+
+        .collection-btn {
+            display: inline-block;
+            padding: 12px 32px;
+            background: #1890ff;
+            border-radius: 6px;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .collection-btn:hover {
+            background: #40a9ff;
+        }
+
+        /* 团队页面 */
+        .team-info {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 24px;
+        }
+
+        .team-info h3 {
+            font-size: 20px;
+            margin-bottom: 16px;
+            color: #333;
+        }
+
+        .team-info p {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 12px;
+        }
+
+        /* 登录页面 */
+        .login-box {
+            max-width: 400px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        .login-title {
+            font-size: 24px;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 32px;
+            color: #333;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .login-form input {
+            padding: 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .login-form button {
+            padding: 12px;
+            background: #1890ff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .login-form button:hover {
+            background: #40a9ff;
+        }
+
+        /* 模态框 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-close {
+            float: right;
+            cursor: pointer;
+            font-size: 24px;
+            color: #999;
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            color: #333;
+        }
+
+        .modal-header {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            clear: both;
+            color: #333;
+        }
+
+        .modal-section {
+            margin-bottom: 20px;
+        }
+
+        .modal-label {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .modal-value {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .modal-btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #1890ff;
+            border: none;
+            border-radius: 6px;
+            color: #ffffff;
+            font-size: 14px;
+            cursor: pointer;
+            margin-right: 12px;
+            margin-top: 8px;
+            transition: all 0.3s;
+        }
+
+        .modal-btn:hover {
+            background: #40a9ff;
+        }
+
+        .modal-btn.secondary {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .modal-btn.secondary:hover {
+            background: #e0e0e0;
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        /* 申请发布按钮 */
+        .publish-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 24px;
+            background: #1890ff;
+            border: none;
+            border-radius: 6px;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .publish-btn:hover {
+            background: #40a9ff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3);
+        }
+
+        .publish-btn:active {
+            transform: translateY(0);
+        }
+
+        /* 发布表单 */
+        .publish-form {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .form-label .required {
+            color: #ff4d4f;
+            margin-left: 4px;
+        }
+
+        .form-input,
+        .form-textarea,
+        .form-select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: #1890ff;
+            box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-hint {
+            font-size: 12px;
+            color: #999;
+            margin-top: 4px;
+        }
+
+        .icon-selector {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .icon-option {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            border: 2px solid #e8e8e8;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .icon-option:hover {
+            border-color: #1890ff;
+            background: #f0f5ff;
+        }
+
+        .icon-option.selected {
+            border-color: #1890ff;
+            background: #e6f7ff;
+            box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid #e8e8e8;
+        }
+
+        .btn {
+            padding: 12px 32px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #1890ff;
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background: #40a9ff;
+        }
+
+        .btn-secondary {
+            background: #ffffff;
+            color: #666;
+            border: 1px solid #d9d9d9;
+        }
+
+        .btn-secondary:hover {
+            color: #1890ff;
+            border-color: #1890ff;
+        }
+
+        .btn-success {
+            background: #52c41a;
+            color: #ffffff;
+        }
+
+        .btn-success:hover {
+            background: #73d13d;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <a href="javascript:void(0)" class="navbar-logo">SA Market</a>
+        <ul class="navbar-menu">
+            <li><a class="nav-tab active" data-tab="overview">总览</a></li>
+            <li><a class="nav-tab" data-tab="agents">Agent</a></li>
+            <li><a class="nav-tab" data-tab="skills">Skill</a></li>
+            <li><a class="nav-tab" data-tab="team">团队</a></li>
+        </ul>
+        <a href="javascript:void(0)" class="navbar-login" onclick="switchTab('login')">登录</a>
+    </nav>
+
+    <!-- 总览 Tab -->
+    <div id="tab-overview" class="tab-content active">
+        <!-- Banner -->
+        <section class="banner">
+            <h1>智能销售创新平台</h1>
+            <p class="banner-subtitle">Be Proactive，Change the World.</p>
+            <p class="banner-slogan">智能销售助手，一站解决销售难题</p>
+        </section>
+
+        <!-- 滚动标签 -->
+        <div class="scrolling-text">
+            <div class="scrolling-container">
+                <!-- 第一行 -->
+                <div class="scrolling-row">
+                    <span class="scrolling-tag" onclick="handleTagClick('客户意向分析')">如何使用客户意向分析</span>
+                    <span class="scrolling-tag" onclick="handleTagClick('库存管理助手')">如何使用库存管理助手</span>
+                    <span class="scrolling-tag" onclick="handleTagClick('智能报价计算')">如何使用智能报价计算</span>
+                    <span class="scrolling-tag" onclick="handleTagClick('竞品对比分析')">如何使用竞品对比分析</span>
+                    <!-- 重复实现无缝滚动 -->
+                    <span class="scrolling-tag" onclick="handleTagClick('客户意向分析')">如何使用客户意向分析</span>
+                    <span class="scrolling-tag" onclick="handleTagClick('库存管理助手')">如何使用库存管理助手</span>
+                    <span class="scrolling-tag" onclick="handleTagClick('智能报价计算')">如何使用智能报价计算</span>
+                    <span class="scrolling-tag" onclick="handleTagClick('竞品对比分析')">如何使用竞品对比分析</span>
+                </div>
+
+                <!-- 第二行 -->
+                <div class="scrolling-row">
+                    <span class="scrolling-tag" onclick="handleTagClick('销售跟进助手')">如何使用销售跟进助手</span>
+                    <span class="scrolling-tag" onclick="handleTagClick('话术生成器')">如何使用话术生成器</span>
+                    <span class="scrolling-tag" onclick="handleTagClick('试驾预约')">如何使用试驾预约</span>
+                    <!-- 重复实现无缝滚动 -->
+                    <span class="scrolling-tag" onclick="handleTagClick('销售跟进助手')">如何使用销售跟进助手</span>
+                    <span class="scrolling-tag" onclick="handleTagClick('话术生成器')">如何使用话术生成器</span>
+                    <span class="scrolling-tag" onclick="handleTagClick('试驾预约')">如何使用试驾预约</span>
+                </div>
+
+                <!-- 第三行 -->
+                <div class="scrolling-row">
+                    <span class="scrolling-tag" onclick="handleTagClick('客户画像分析')">如何使用客户画像分析</span>
+                    <span class="scrolling-tag" onclick="handleTagClick('销售漏斗分析')">如何使用销售漏斗分析</span>
+                    <span class="scrolling-tag" onclick="handleTagClick('成交概率预测')">如何使用成交概率预测</span>
+                    <!-- 重复实现无缝滚动 -->
+                    <span class="scrolling-tag" onclick="handleTagClick('客户画像分析')">如何使用客户画像分析</span>
+                    <span class="scrolling-tag" onclick="handleTagClick('销售漏斗分析')">如何使用销售漏斗分析</span>
+                    <span class="scrolling-tag" onclick="handleTagClick('成交概率预测')">如何使用成交概率预测</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主内容 -->
+        <div class="container">
+            <!-- Agents 区域 -->
+            <section>
+                <div class="section-header">
+                    <div>
+                        <h2 class="section-title">Agents</h2>
+                        <p class="section-subtitle">探索智能化的 Agents</p>
+                    </div>
+                    <a href="javascript:void(0)" class="view-all" onclick="switchTab('agents')">查看全部 →</a>
+                </div>
+                <div class="apps-grid" id="overviewAgentsGrid"></div>
+            </section>
+
+            <!-- Skills 市场区域 -->
+            <section>
+                <div class="section-header">
+                    <div>
+                        <h2 class="section-title">Skills 市场</h2>
+                        <p class="section-subtitle">发现并分享优秀的销售技能</p>
+                    </div>
+                    <a href="javascript:void(0)" class="view-all" onclick="switchTab('skills')">浏览市场 →</a>
+                </div>
+                <div class="apps-grid" id="overviewSkillsGrid"></div>
+            </section>
+
+            <!-- 我的收藏 -->
+            <section>
+                <div class="collection-section">
+                    <div class="collection-icon">⭐</div>
+                    <h3 class="collection-title">我的收藏</h3>
+                    <p class="collection-desc">管理你收藏的技能和应用</p>
+                    <a href="javascript:void(0)" class="collection-btn">查看收藏</a>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Agents Tab -->
+    <div id="tab-agents" class="tab-content">
+        <section class="banner">
+            <h1>Agents</h1>
+            <p class="banner-subtitle">探索智能化的 Agents</p>
+        </section>
+
+        <div class="container">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">所有 Agents</h2>
+                    <p class="section-subtitle">浏览和使用智能体应用</p>
+                </div>
+                <button class="publish-btn" onclick="showPublishForm('agent')">
+                    <span>📝</span>
+                    <span>申请发布 Agent</span>
+                </button>
+            </div>
+            <div class="apps-grid" id="agentsGrid"></div>
+        </div>
+    </div>
+
+    <!-- Skills Tab -->
+    <div id="tab-skills" class="tab-content">
+        <section class="banner">
+            <h1>Skills 市场</h1>
+            <p class="banner-subtitle">发现并分享优秀的销售技能</p>
+        </section>
+
+        <div class="container">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">所有 Skills</h2>
+                    <p class="section-subtitle">浏览和使用技能应用</p>
+                </div>
+                <button class="publish-btn" onclick="showPublishForm('skill')">
+                    <span>📝</span>
+                    <span>申请发布 Skill</span>
+                </button>
+            </div>
+            <div class="apps-grid" id="skillsGrid"></div>
+        </div>
+    </div>
+
+    <!-- 团队 Tab -->
+    <div id="tab-team" class="tab-content">
+        <section class="banner">
+            <h1>团队</h1>
+            <p class="banner-subtitle">市场营销 - 营销系统组织</p>
+        </section>
+
+        <div class="container">
+            <div class="team-info">
+                <h3>📊 团队统计</h3>
+                <p>团队成员：<strong>32 人</strong></p>
+                <p>发布应用：<strong>48 个</strong> (25 Agents, 23 Skills)</p>
+                <p>总安装量：<strong>1,250 次</strong></p>
+                <p>平均评分：<strong>4.7 / 5.0</strong></p>
+            </div>
+
+            <div class="team-info">
+                <h3>🏆 Top 贡献者</h3>
+                <p>1. 孙七 - 5 个应用 | 312 次安装</p>
+                <p>2. 王五 - 4 个应用 | 201 次安装</p>
+                <p>3. 赵六 - 3 个应用 | 156 次安装</p>
+            </div>
+
+            <div class="team-info">
+                <h3>📢 团队公告</h3>
+                <p>• 新版审核流程已上线，审核周期缩短至 1-2 天</p>
+                <p>• 优秀应用将获得首页推荐位</p>
+                <p>• 定期举办技术分享会，欢迎报名参加</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 登录 Tab -->
+    <div id="tab-login" class="tab-content">
+        <section class="banner">
+            <h1>登录</h1>
+            <p class="banner-subtitle">使用飞书账号登录</p>
+        </section>
+
+        <div class="container">
+            <div class="login-box">
+                <div class="login-title">SA Market 登录</div>
+                <form class="login-form" onsubmit="handleLogin(event)">
+                    <input type="email" placeholder="飞书邮箱" required>
+                    <input type="password" placeholder="密码" required>
+                    <button type="submit">登录</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 详情模态框 -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- 发布应用模态框 -->
+    <div id="publishModal" class="modal">
+        <div class="modal-content" style="max-width: 900px;">
+            <span class="modal-close" onclick="closePublishModal()">&times;</span>
+            <div id="publishModalBody"></div>
+        </div>
+    </div>
+
+    <script>
+        // 演示数据
+        const allApps = [
+            {
+                id: '1',
+                name: 'customer-intent-demo',
+                display_name: '客户意向分析',
+                description: '基于客户沟通记录、行为数据，自动评估客户购车意向度，提供精准的跟进建议和成交概率预测。',
+                type: 'skill',
+                category: '客户管理',
+                publisher_name: '张三',
+                publisher_dept: '市场营销-营销系统',
+                rating_avg: 4.8,
+                install_count: 125,
+                icon: '⚡'
+            },
+            {
+                id: '2',
+                name: 'inventory-agent',
+                display_name: '库存管理助手',
+                description: '自动化库存查询、预测和预警。集成多个 Skills 提供完整的库存管理解决方案。',
+                type: 'agent',
+                category: '供应链',
+                publisher_name: '李四',
+                publisher_dept: '供应链管理',
+                rating_avg: 4.9,
+                install_count: 89,
+                icon: '🤖'
+            },
+            {
+                id: '3',
+                name: 'quote-calculator',
+                display_name: '智能报价计算',
+                description: '综合考虑客户支付能力、库存情况、竞品定价、销售目标等因素，生成最优报价方案。',
+                type: 'skill',
+                category: '营销工具',
+                publisher_name: '王五',
+                publisher_dept: '市场营销-营销系统',
+                rating_avg: 4.7,
+                install_count: 201,
+                icon: '⚡'
+            },
+            {
+                id: '4',
+                name: 'competitor-analysis',
+                display_name: '竞品对比分析',
+                description: '自动生成与竞品的对比分析报告，突出我方优势，提供应对话术。',
+                type: 'skill',
+                category: '数据分析',
+                publisher_name: '赵六',
+                publisher_dept: '产品部',
+                rating_avg: 4.6,
+                install_count: 156,
+                icon: '⚡'
+            },
+            {
+                id: '5',
+                name: 'sales-assistant',
+                display_name: '销售跟进助手',
+                description: '智能销售助手，提供客户意向分析、跟进策略推荐、话术生成等一站式支持。',
+                type: 'agent',
+                category: '客户管理',
+                publisher_name: '孙七',
+                publisher_dept: '销售部',
+                rating_avg: 4.9,
+                install_count: 312,
+                icon: '🤖'
+            },
+            {
+                id: '6',
+                name: 'test-drive-booking',
+                display_name: '试驾预约管理',
+                description: '自动化试驾预约流程，智能分配试驾车辆和时间，提升试驾转化率。',
+                type: 'skill',
+                category: '营销工具',
+                publisher_name: '周八',
+                publisher_dept: '市场营销-营销系统',
+                rating_avg: 4.5,
+                install_count: 98,
+                icon: '⚡'
+            }
+        ];
+
+        // Tab 切换
+        function switchTab(tabName) {
+            // 隐藏所有 tab 内容
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // 显示目标 tab
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+
+            // 更新导航栏激活状态
+            document.querySelectorAll('.nav-tab').forEach(navTab => {
+                navTab.classList.remove('active');
+            });
+            const activeNavTab = document.querySelector(`.nav-tab[data-tab="${tabName}"]`);
+            if (activeNavTab) {
+                activeNavTab.classList.add('active');
+            }
+
+            // 滚动到顶部
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 导航点击事件
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                switchTab(tab.dataset.tab);
+            });
+        });
+
+        // 渲染应用卡片
+        function renderAppCard(app) {
+            return `
+                <div class="app-card" onclick="viewApp('${app.id}')">
+                    <div class="app-card-content">
+                        <div class="app-card-header">
+                            <div>
+                                <div class="app-card-title">${app.display_name}</div>
+                                <div class="app-card-type">${app.type === 'agent' ? '智能体' : '技能'}</div>
+                            </div>
+                            <div class="app-card-icon">${app.icon}</div>
+                        </div>
+                        <div class="app-card-desc">${app.description}</div>
+                        <div class="app-card-footer">
+                            <div class="app-card-author">贡献者 ${app.publisher_name}</div>
+                            <div class="app-card-stats">
+                                <span>⭐ ${app.rating_avg}</span>
+                                <span>📥 ${app.install_count}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderApps() {
+            const agents = allApps.filter(app => app.type === 'agent');
+            const skills = allApps.filter(app => app.type === 'skill');
+
+            // 总览页面 - 显示部分应用
+            document.getElementById('overviewAgentsGrid').innerHTML = agents.slice(0, 2).map(renderAppCard).join('');
+            document.getElementById('overviewSkillsGrid').innerHTML = skills.slice(0, 4).map(renderAppCard).join('');
+
+            // Agents 页面 - 显示全部 Agents
+            document.getElementById('agentsGrid').innerHTML = agents.map(renderAppCard).join('');
+
+            // Skills 页面 - 显示全部 Skills
+            document.getElementById('skillsGrid').innerHTML = skills.map(renderAppCard).join('');
+        }
+
+        // 查看应用详情
+        function viewApp(appId) {
+            const app = allApps.find(a => a.id === appId);
+            if (!app) return;
+
+            document.getElementById('modalBody').innerHTML = `
+                <div class="modal-header">${app.display_name}</div>
+
+                <div class="modal-section">
+                    <div class="modal-label">类型</div>
+                    <div class="modal-value">${app.type === 'agent' ? '🤖 Agent' : '⚡ Skill'}</div>
+                </div>
+
+                <div class="modal-section">
+                    <div class="modal-label">分类</div>
+                    <div class="modal-value">${app.category}</div>
+                </div>
+
+                <div class="modal-section">
+                    <div class="modal-label">贡献者</div>
+                    <div class="modal-value">${app.publisher_name} (${app.publisher_dept})</div>
+                </div>
+
+                <div class="modal-section">
+                    <div class="modal-label">评分与安装</div>
+                    <div class="modal-value">⭐ ${app.rating_avg} | 📥 ${app.install_count} 次安装</div>
+                </div>
+
+                <div class="modal-section">
+                    <div class="modal-label">功能描述</div>
+                    <div class="modal-value">${app.description}</div>
+                </div>
+
+                <button class="modal-btn" onclick="installApp('${app.id}')">🚀 一键安装</button>
+                <button class="modal-btn secondary" onclick="downloadApp('${app.id}')">📥 下载压缩包</button>
+            `;
+
+            document.getElementById('modal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+        }
+
+        function installApp(appId) {
+            const app = allApps.find(a => a.id === appId);
+            alert(`✅ 安装成功！\n\n应用: ${app.display_name}\n\n（演示版本）`);
+            closeModal();
+        }
+
+        function downloadApp(appId) {
+            const app = allApps.find(a => a.id === appId);
+            alert(`📥 下载链接已生成\n\n应用: ${app.display_name}\n\n（演示版本）`);
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            alert('登录功能开发中...\n\n（演示版本）');
+        }
+
+        // 标签点击事件
+        function handleTagClick(tagName) {
+            // 暂停所有行的滚动动画
+            const rows = document.querySelectorAll('.scrolling-row');
+            rows.forEach(row => {
+                row.style.animationPlayState = 'paused';
+            });
+
+            alert(`你点击了：${tagName}\n\n（演示版本：可以在这里跳转到对应的应用详情页）`);
+
+            // 恢复滚动动画
+            setTimeout(() => {
+                rows.forEach(row => {
+                    row.style.animationPlayState = 'running';
+                });
+            }, 100);
+        }
+
+        // 鼠标悬停时暂停滚动
+        document.addEventListener('DOMContentLoaded', () => {
+            const scrollingText = document.querySelector('.scrolling-text');
+            const rows = document.querySelectorAll('.scrolling-row');
+
+            scrollingText.addEventListener('mouseenter', () => {
+                rows.forEach(row => {
+                    row.style.animationPlayState = 'paused';
+                });
+            });
+
+            scrollingText.addEventListener('mouseleave', () => {
+                rows.forEach(row => {
+                    row.style.animationPlayState = 'running';
+                });
+            });
+        });
+
+        // 显示发布表单
+        let currentPublishType = 'agent';
+        let selectedIcon = '🤖';
+
+        function showPublishForm(type) {
+            currentPublishType = type;
+            selectedIcon = type === 'agent' ? '🤖' : '⚡';
+
+            const icons = type === 'agent'
+                ? ['🤖', '🚀', '💡', '🎯', '⚙️', '🔧', '🌟', '💎', '🎨', '🔮', '🎭', '🎪', '🎬', '🎵', '🎸', '🎮']
+                : ['⚡', '💡', '🎯', '📊', '📈', '📉', '🔍', '🔎', '📝', '📋', '📌', '📍', '🎨', '🎭', '✨', '⭐'];
+
+            document.getElementById('publishModalBody').innerHTML = `
+                <div class="modal-header">${type === 'agent' ? '申请发布 Agent' : '申请发布 Skill'}</div>
+
+                <form class="publish-form" id="publishForm" onsubmit="handlePublish(event)">
+                    <!-- 应用类型 -->
+                    <div class="form-group">
+                        <label class="form-label">应用类型</label>
+                        <input type="text" class="form-input" value="${type === 'agent' ? 'Agent (智能体)' : 'Skill (技能)'}" disabled>
+                    </div>
+
+                    <!-- 应用名称 -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            应用名称
+                            <span class="required">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            class="form-input"
+                            id="appName"
+                            placeholder="请输入应用名称，如：客户意向分析"
+                            required
+                        >
+                        <div class="form-hint">建议使用简洁明了的名称，10字以内</div>
+                    </div>
+
+                    <!-- 应用标识 -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            应用标识
+                            <span class="required">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            class="form-input"
+                            id="appId"
+                            placeholder="请输入英文标识，如：customer-intent-analysis"
+                            pattern="[a-z0-9-]+"
+                            required
+                        >
+                        <div class="form-hint">仅支持小写字母、数字和连字符</div>
+                    </div>
+
+                    <!-- 应用图标 -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            应用图标
+                            <span class="required">*</span>
+                        </label>
+                        <input type="hidden" id="appIcon" value="${selectedIcon}">
+                        <div class="icon-selector" id="iconSelector">
+                            ${icons.map(icon => `
+                                <div class="icon-option ${icon === selectedIcon ? 'selected' : ''}" onclick="selectIcon('${icon}')">
+                                    ${icon}
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="form-hint">点击选择一个图标</div>
+                    </div>
+
+                    <!-- 核心功能介绍 -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            核心功能介绍
+                            <span class="required">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            class="form-input"
+                            id="appSummary"
+                            placeholder="一句话描述核心功能，50字以内"
+                            maxlength="50"
+                            required
+                        >
+                        <div class="form-hint">简洁描述应用的核心价值</div>
+                    </div>
+
+                    <!-- 详细介绍 -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            详细介绍
+                            <span class="required">*</span>
+                        </label>
+                        <textarea
+                            class="form-textarea"
+                            id="appDescription"
+                            placeholder="详细描述应用的功能特性、使用场景、解决的问题等"
+                            required
+                        ></textarea>
+                        <div class="form-hint">建议 100-500 字</div>
+                    </div>
+
+                    <!-- 应用分类 -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            应用分类
+                            <span class="required">*</span>
+                        </label>
+                        <select class="form-select" id="appCategory" required>
+                            <option value="">请选择分类</option>
+                            <option value="客户管理">客户管理</option>
+                            <option value="营销工具">营销工具</option>
+                            <option value="数据分析">数据分析</option>
+                            <option value="供应链">供应链</option>
+                            <option value="销售管理">销售管理</option>
+                            <option value="其他">其他</option>
+                        </select>
+                    </div>
+
+                    <!-- 贡献者姓名 -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            贡献者姓名
+                            <span class="required">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            class="form-input"
+                            id="authorName"
+                            placeholder="请输入你的姓名"
+                            required
+                        >
+                    </div>
+
+                    <!-- 所属部门 -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            所属部门
+                            <span class="required">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            class="form-input"
+                            id="authorDept"
+                            placeholder="请输入所属部门，如：市场营销-营销系统"
+                            required
+                        >
+                    </div>
+
+                    <!-- 联系方式 -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            联系方式
+                        </label>
+                        <input
+                            type="text"
+                            class="form-input"
+                            id="authorContact"
+                            placeholder="飞书账号或邮箱（选填）"
+                        >
+                    </div>
+
+                    <!-- 操作按钮 -->
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closePublishModal()">取消</button>
+                        <button type="button" class="btn btn-primary" onclick="handleSaveDraft()">保存草稿</button>
+                        <button type="submit" class="btn btn-success">提交审核</button>
+                    </div>
+                </form>
+            `;
+
+            document.getElementById('publishModal').classList.add('active');
+        }
+
+        function closePublishModal() {
+            document.getElementById('publishModal').classList.remove('active');
+        }
+
+        function selectIcon(icon) {
+            selectedIcon = icon;
+            document.getElementById('appIcon').value = icon;
+
+            // 更新选中状态
+            document.querySelectorAll('.icon-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            event.target.closest('.icon-option').classList.add('selected');
+        }
+
+        function handleSaveDraft() {
+            const formData = getFormData();
+            if (!formData.appName || !formData.appId) {
+                alert('请至少填写应用名称和应用标识');
+                return;
+            }
+
+            // 这里可以调用 API 保存草稿
+            console.log('保存草稿:', formData);
+            alert('✅ 草稿已保存\n\n你可以稍后继续编辑');
+        }
+
+        function handlePublish(e) {
+            e.preventDefault();
+
+            const formData = getFormData();
+
+            // 这里可以调用 API 提交审核
+            console.log('提交审核:', formData);
+
+            alert(`✅ 提交成功！\n\n应用名称：${formData.appName}\n应用类型：${formData.type === 'agent' ? 'Agent' : 'Skill'}\n\n你的应用已提交审核，预计 1-2 个工作日内完成审核。审核结果将通过飞书通知。`);
+
+            closePublishModal();
+        }
+
+        function getFormData() {
+            return {
+                type: currentPublishType,
+                appName: document.getElementById('appName')?.value || '',
+                appId: document.getElementById('appId')?.value || '',
+                appIcon: document.getElementById('appIcon')?.value || selectedIcon,
+                appSummary: document.getElementById('appSummary')?.value || '',
+                appDescription: document.getElementById('appDescription')?.value || '',
+                appCategory: document.getElementById('appCategory')?.value || '',
+                authorName: document.getElementById('authorName')?.value || '',
+                authorDept: document.getElementById('authorDept')?.value || '',
+                authorContact: document.getElementById('authorContact')?.value || ''
+            };
+        }
+
+        // 点击模态框外部关闭
+        document.getElementById('modal').addEventListener('click', (e) => {
+            if (e.target.id === 'modal') {
+                closeModal();
+            }
+        });
+
+        document.getElementById('publishModal').addEventListener('click', (e) => {
+            if (e.target.id === 'publishModal') {
+                closePublishModal();
+            }
+        });
+
+        // 初始化
+        renderApps();
+    </script>
+</body>
+</html>
