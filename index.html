@@ -681,6 +681,110 @@
         .btn-success:hover {
             background: #73d13d;
         }
+
+        /* 附件上传区域 */
+        .upload-area {
+            border: 2px dashed #d9d9d9;
+            border-radius: 8px;
+            padding: 24px;
+            text-align: center;
+            background: #fafafa;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .upload-area:hover {
+            border-color: #1890ff;
+            background: #f0f5ff;
+        }
+
+        .upload-area.dragover {
+            border-color: #1890ff;
+            background: #e6f7ff;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+            color: #999;
+        }
+
+        .upload-text {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .upload-hint {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-list {
+            margin-top: 16px;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            background: #ffffff;
+            border: 1px solid #e8e8e8;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            transition: all 0.3s;
+        }
+
+        .file-item:hover {
+            border-color: #1890ff;
+            background: #f0f5ff;
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .file-icon {
+            font-size: 24px;
+        }
+
+        .file-details {
+            flex: 1;
+        }
+
+        .file-name {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .file-size {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .file-remove {
+            padding: 4px 12px;
+            background: #ff4d4f;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-remove:hover {
+            background: #ff7875;
+        }
     </style>
 </head>
 <body>
@@ -1146,10 +1250,12 @@
         // 显示发布表单
         let currentPublishType = 'agent';
         let selectedIcon = '🤖';
+        let uploadedFiles = [];
 
         function showPublishForm(type) {
             currentPublishType = type;
             selectedIcon = type === 'agent' ? '🤖' : '⚡';
+            uploadedFiles = []; // 重置文件列表
 
             const icons = type === 'agent'
                 ? ['🤖', '🚀', '💡', '🎯', '⚙️', '🔧', '🌟', '💎', '🎨', '🔮', '🎭', '🎪', '🎬', '🎵', '🎸', '🎮']
@@ -1307,6 +1413,28 @@
                         >
                     </div>
 
+                    <!-- 附件上传 -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            上传附件
+                        </label>
+                        <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+                            <div class="upload-icon">📎</div>
+                            <div class="upload-text">点击或拖拽文件到此处上传</div>
+                            <div class="upload-hint">支持 ZIP、PDF、Word、Excel 等文件，单个文件不超过 50MB</div>
+                        </div>
+                        <input
+                            type="file"
+                            id="fileInput"
+                            class="file-input"
+                            multiple
+                            accept=".zip,.rar,.7z,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.md"
+                            onchange="handleFileSelect(event)"
+                        >
+                        <div class="file-list" id="fileList"></div>
+                        <div class="form-hint">可上传应用代码包、说明文档、演示文件等（选填，最多5个文件）</div>
+                    </div>
+
                     <!-- 操作按钮 -->
                     <div class="form-actions">
                         <button type="button" class="btn btn-secondary" onclick="closePublishModal()">取消</button>
@@ -1317,6 +1445,137 @@
             `;
 
             document.getElementById('publishModal').classList.add('active');
+
+            // 设置拖拽上传事件
+            setupDragAndDrop();
+        }
+
+        function setupDragAndDrop() {
+            const uploadArea = document.getElementById('uploadArea');
+
+            if (!uploadArea) return;
+
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, () => {
+                    uploadArea.classList.add('dragover');
+                }, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, () => {
+                    uploadArea.classList.remove('dragover');
+                }, false);
+            });
+
+            uploadArea.addEventListener('drop', (e) => {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                handleFiles(files);
+            }, false);
+        }
+
+        function handleFileSelect(event) {
+            const files = event.target.files;
+            handleFiles(files);
+        }
+
+        function handleFiles(files) {
+            // 限制最多5个文件
+            const remainingSlots = 5 - uploadedFiles.length;
+            if (remainingSlots <= 0) {
+                alert('最多只能上传5个文件');
+                return;
+            }
+
+            const filesToAdd = Array.from(files).slice(0, remainingSlots);
+
+            filesToAdd.forEach(file => {
+                // 检查文件大小（50MB限制）
+                if (file.size > 50 * 1024 * 1024) {
+                    alert(`文件 "${file.name}" 超过 50MB，已跳过`);
+                    return;
+                }
+
+                // 添加到文件列表
+                uploadedFiles.push(file);
+            });
+
+            renderFileList();
+        }
+
+        function renderFileList() {
+            const fileList = document.getElementById('fileList');
+            if (!fileList) return;
+
+            if (uploadedFiles.length === 0) {
+                fileList.innerHTML = '';
+                return;
+            }
+
+            fileList.innerHTML = uploadedFiles.map((file, index) => {
+                const fileSize = formatFileSize(file.size);
+                const fileIcon = getFileIcon(file.name);
+
+                return `
+                    <div class="file-item">
+                        <div class="file-info">
+                            <div class="file-icon">${fileIcon}</div>
+                            <div class="file-details">
+                                <div class="file-name">${file.name}</div>
+                                <div class="file-size">${fileSize}</div>
+                            </div>
+                        </div>
+                        <button type="button" class="file-remove" onclick="removeFile(${index})">删除</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function removeFile(index) {
+            uploadedFiles.splice(index, 1);
+            renderFileList();
+
+            // 重置 file input
+            const fileInput = document.getElementById('fileInput');
+            if (fileInput) {
+                fileInput.value = '';
+            }
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+
+        function getFileIcon(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            const iconMap = {
+                'zip': '📦',
+                'rar': '📦',
+                '7z': '📦',
+                'pdf': '📄',
+                'doc': '📝',
+                'docx': '📝',
+                'xls': '📊',
+                'xlsx': '📊',
+                'ppt': '📊',
+                'pptx': '📊',
+                'txt': '📄',
+                'md': '📄'
+            };
+            return iconMap[ext] || '📎';
         }
 
         function closePublishModal() {
@@ -1354,7 +1613,11 @@
             // 这里可以调用 API 提交审核
             console.log('提交审核:', formData);
 
-            alert(`✅ 提交成功！\n\n应用名称：${formData.appName}\n应用类型：${formData.type === 'agent' ? 'Agent' : 'Skill'}\n\n你的应用已提交审核，预计 1-2 个工作日内完成审核。审核结果将通过飞书通知。`);
+            const attachmentInfo = formData.attachments.length > 0
+                ? `\n附件数量：${formData.attachments.length} 个`
+                : '';
+
+            alert(`✅ 提交成功！\n\n应用名称：${formData.appName}\n应用类型：${formData.type === 'agent' ? 'Agent' : 'Skill'}${attachmentInfo}\n\n你的应用已提交审核，预计 1-2 个工作日内完成审核。审核结果将通过飞书通知。`);
 
             closePublishModal();
         }
@@ -1370,7 +1633,8 @@
                 appCategory: document.getElementById('appCategory')?.value || '',
                 authorName: document.getElementById('authorName')?.value || '',
                 authorDept: document.getElementById('authorDept')?.value || '',
-                authorContact: document.getElementById('authorContact')?.value || ''
+                authorContact: document.getElementById('authorContact')?.value || '',
+                attachments: uploadedFiles
             };
         }
 
