@@ -831,11 +831,13 @@
 
                 <!-- 第二行 -->
                 <div class="scrolling-row">
+                    <span class="scrolling-tag" onclick="handleTagClick('车型库专家')">如何使用车型库专家</span>
                     <span class="scrolling-tag" onclick="handleTagClick('AC-UI 制作原型')">如何使用 AC-UI 制作原型</span>
                     <span class="scrolling-tag" onclick="handleTagClick('销售跟进助手')">如何使用销售跟进助手</span>
                     <span class="scrolling-tag" onclick="handleTagClick('话术生成器')">如何使用话术生成器</span>
                     <span class="scrolling-tag" onclick="handleTagClick('试驾预约')">如何使用试驾预约</span>
                     <!-- 重复实现无缝滚动 -->
+                    <span class="scrolling-tag" onclick="handleTagClick('车型库专家')">如何使用车型库专家</span>
                     <span class="scrolling-tag" onclick="handleTagClick('AC-UI 制作原型')">如何使用 AC-UI 制作原型</span>
                     <span class="scrolling-tag" onclick="handleTagClick('销售跟进助手')">如何使用销售跟进助手</span>
                     <span class="scrolling-tag" onclick="handleTagClick('话术生成器')">如何使用话术生成器</span>
@@ -1086,6 +1088,19 @@
                 rating_avg: 4.9,
                 install_count: 89,
                 icon: '🔍'
+            },
+            {
+                id: '11',
+                name: 'vehicle-model-expert',
+                display_name: '车型库专家',
+                description: '一问即答：专业快速查询车系、年款与配置参数，解读发动机、变速箱、新能源续航等专业术语，解析 VIN 车架号，对比多款车型差异，梳理新老款与改款脉络，并辅助理解指导价、金融定价与残值逻辑。',
+                type: 'agent',
+                category: '车型知识',
+                publisher_name: '孙五',
+                publisher_dept: 'AutoCava',
+                rating_avg: 4.9,
+                install_count: 204,
+                icon: '🚗'
             },
             {
                 id: '3',
@@ -1430,6 +1445,7 @@
                             <option value="产品文档">产品文档</option>
                             <option value="设计工具">设计工具</option>
                             <option value="沟通协作">沟通协作</option>
+                            <option value="车型知识">车型知识</option>
                             <option value="其他">其他</option>
                         </select>
                     </div>
