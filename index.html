@@ -571,6 +571,20 @@
             color: #999;
         }
 
+        /* 安装代码块 */
+        .install-code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            border-radius: 8px;
+            padding: 16px;
+            font-family: 'SF Mono', Monaco, Consolas, 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            white-space: pre;
+            overflow: auto;
+            max-height: 260px;
+        }
+
         /* 空状态 */
         .empty-state {
             text-align: center;
@@ -1112,6 +1126,14 @@
         </div>
     </div>
 
+    <!-- 安装代码模态框 -->
+    <div id="installCodeModal" class="modal">
+        <div class="modal-content" style="max-width: 640px;">
+            <span class="modal-close" onclick="closeInstallCodeModal()">&times;</span>
+            <div id="installCodeModalBody"></div>
+        </div>
+    </div>
+
     <script>
         // 演示数据
         const allApps = [
@@ -1368,8 +1390,8 @@
                     <div class="install-grid">
                         <div class="install-option" onclick="installTo('claude', '${app.id}')">
                             <div class="install-option-icon">✨</div>
-                            <div class="install-option-name">Claude</div>
-                            <div class="install-option-desc">AI 智能助手</div>
+                            <div class="install-option-name">Claude Code</div>
+                            <div class="install-option-desc">AI 编程助手</div>
                         </div>
                         <div class="install-option" onclick="installTo('chatgpt', '${app.id}')">
                             <div class="install-option-icon">🤖</div>
@@ -1395,14 +1417,145 @@
 
         function installTo(platform, appId) {
             const app = allApps.find(a => a.id === appId);
+            if (!app) return;
+            showInstallCodeModal(app, platform);
+        }
+
+        // 生成各平台安装代码
+        function buildInstallCode(platform, app) {
+            const name = app.name;
+            const display = app.display_name;
+            const typeLabel = app.type === 'agent' ? 'Agent' : 'Skill';
+
+            if (platform === 'claude') {
+                return [
+                    `# 安装「${display}」(${typeLabel}) 到 Claude Code`,
+                    `# 1. 添加官方插件市场`,
+                    `/plugin marketplace add anthropics/claude-plugins-official`,
+                    ``,
+                    `# 2. 安装应用`,
+                    `/plugin install ${name}@claude-plugins-official`,
+                    ``,
+                    `# 3. 验证安装`,
+                    `/plugins`
+                ].join('\n');
+            }
+
+            if (platform === 'chatgpt') {
+                return [
+                    `# 安装「${display}」(${typeLabel}) 到 ChatGPT (GPTs)`,
+                    ``,
+                    `{`,
+                    `  "name": "${display}",`,
+                    `  "gpt_id": "${name}@openai-gpts",`,
+                    `  "instructions": "由 AutoCava Skills Market 提供，实现${typeLabel}能力。",`,
+                    `  "action": "https://yuanliniu27-spec.github.io/sa-market/api/${name}.json",`,
+                    `  "visibility": "private"`,
+                    `}`,
+                    ``,
+                    `# 使用方式：`,
+                    `# 1) 打开 chatgpt.com → 探索 GPTs → 创建`,
+                    `# 2) 按 JSON 配置填妥后保存，或在对话中粘贴此配置自动创建`
+                ].join('\n');
+            }
+
+            return [
+                `# 安装「${display}」(${typeLabel}) 到 WorkBuddy`,
+                `# 1. 添加市场源`,
+                `workbuddy market add yuanliniu27-spec/sa-market`,
+                ``,
+                `# 2. 安装并启用`,
+                `workbuddy install ${name}`,
+                `workbuddy enable ${name}`,
+                ``,
+                `# 3. 查看安装状态`,
+                `workbuddy list`
+            ].join('\n');
+        }
+
+        function showInstallCodeModal(app, platform) {
             const platformNames = {
-                claude: 'Claude',
+                claude: 'Claude Code',
                 chatgpt: 'ChatGPT',
                 workbuddy: 'WorkBuddy'
             };
-            const target = platformNames[platform] || '未知平台';
-            alert(`✅ 安装请求已发起\n\n应用: ${app.display_name}\n安装目标: ${target}\n\n（演示版本：将跳转至 ${target} 完成安装配置）`);
-            closeModal();
+            const code = buildInstallCode(platform, app);
+
+            document.getElementById('installCodeModalBody').innerHTML = `
+                <div class="modal-header">📋 ${platformNames[platform]} 安装代码</div>
+
+                <div class="modal-section">
+                    <div class="modal-label">应用</div>
+                    <div class="modal-value">${app.display_name}（${app.type === 'agent' ? '🤖 Agent' : '⚡ Skill'}）</div>
+                </div>
+
+                <div class="modal-section">
+                    <div class="modal-label">安装到</div>
+                    <div class="modal-value">${platformNames[platform]}</div>
+                </div>
+
+                <div class="modal-section">
+                    <div class="modal-label">复制以下代码完成安装</div>
+                    <pre class="install-code-block" id="installCodeText">${escapeHtml(code)}</pre>
+                </div>
+
+                <button class="modal-btn" id="copyInstallBtn" onclick="copyInstallCode()">📋 复制代码</button>
+                <button class="modal-btn secondary" onclick="closeInstallCodeModal()">关闭</button>
+            `;
+
+            document.getElementById('installCodeModal').classList.add('active');
+        }
+
+        function closeInstallCodeModal() {
+            document.getElementById('installCodeModal').classList.remove('active');
+        }
+
+        function copyInstallCode() {
+            const code = document.getElementById('installCodeText').innerText;
+            const onSuccess = () => {
+                const btn = document.getElementById('copyInstallBtn');
+                const original = btn.innerHTML;
+                btn.innerHTML = '✅ 已复制到剪贴板';
+                setTimeout(() => { btn.innerHTML = original; }, 2000);
+            };
+            const onFail = () => {
+                alert('复制失败，请手动选择代码进行复制');
+            };
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(code).then(onSuccess).catch(() => fallbackCopy(code, onSuccess, onFail));
+            } else {
+                fallbackCopy(code, onSuccess, onFail);
+            }
+        }
+
+        function fallbackCopy(text, onSuccess, onFail) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            let ok = false;
+            try {
+                ok = document.execCommand('copy');
+            } catch (e) {
+                ok = false;
+            }
+            document.body.removeChild(textarea);
+            if (ok) {
+                onSuccess();
+            } else {
+                onFail();
+            }
+        }
+
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
         }
 
         function downloadApp(appId) {
@@ -1944,6 +2097,12 @@
         document.getElementById('contribModal').addEventListener('click', (e) => {
             if (e.target.id === 'contribModal') {
                 closeContribModal();
+            }
+        });
+
+        document.getElementById('installCodeModal').addEventListener('click', (e) => {
+            if (e.target.id === 'installCodeModal') {
+                closeInstallCodeModal();
             }
         });
 
