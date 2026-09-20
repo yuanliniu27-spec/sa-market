@@ -511,6 +511,54 @@
             background: #e0e0e0;
         }
 
+        /* 安装目标选项 */
+        .install-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .install-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 20px 12px;
+            border: 2px solid #e8e8e8;
+            border-radius: 12px;
+            background: #ffffff;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .install-option:hover {
+            border-color: #1890ff;
+            background: #f0f5ff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(24, 144, 255, 0.15);
+        }
+
+        .install-option:active {
+            transform: translateY(0);
+        }
+
+        .install-option-icon {
+            font-size: 28px;
+        }
+
+        .install-option-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .install-option-desc {
+            font-size: 12px;
+            color: #999;
+        }
+
         /* 空状态 */
         .empty-state {
             text-align: center;
@@ -548,6 +596,22 @@
 
         .publish-btn:active {
             transform: translateY(0);
+        }
+
+        /* 头部操作按钮组 */
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .contrib-btn {
+            background: #52c41a;
+        }
+
+        .contrib-btn:hover {
+            background: #73d13d;
+            box-shadow: 0 4px 12px rgba(82, 196, 26, 0.3);
         }
 
         /* 发布表单 */
@@ -910,10 +974,16 @@
                     <h2 class="section-title">所有 Agents</h2>
                     <p class="section-subtitle">浏览和使用智能体应用</p>
                 </div>
-                <button class="publish-btn" onclick="showPublishForm('agent')">
-                    <span>📝</span>
-                    <span>申请发布 Agent</span>
-                </button>
+                <div class="header-actions">
+                    <button class="publish-btn contrib-btn" onclick="openContribModal()">
+                        <span>🌟</span>
+                        <span>我要贡献</span>
+                    </button>
+                    <button class="publish-btn" onclick="showPublishForm('agent')">
+                        <span>📝</span>
+                        <span>申请发布 Agent</span>
+                    </button>
+                </div>
             </div>
             <div class="apps-grid" id="agentsGrid"></div>
         </div>
@@ -932,10 +1002,16 @@
                     <h2 class="section-title">所有 Skills</h2>
                     <p class="section-subtitle">浏览和使用技能应用</p>
                 </div>
-                <button class="publish-btn" onclick="showPublishForm('skill')">
-                    <span>📝</span>
-                    <span>申请发布 Skill</span>
-                </button>
+                <div class="header-actions">
+                    <button class="publish-btn contrib-btn" onclick="openContribModal()">
+                        <span>🌟</span>
+                        <span>我要贡献</span>
+                    </button>
+                    <button class="publish-btn" onclick="showPublishForm('skill')">
+                        <span>📝</span>
+                        <span>申请发布 Skill</span>
+                    </button>
+                </div>
             </div>
             <div class="apps-grid" id="skillsGrid"></div>
         </div>
@@ -1005,6 +1081,14 @@
         <div class="modal-content" style="max-width: 900px;">
             <span class="modal-close" onclick="closePublishModal()">&times;</span>
             <div id="publishModalBody"></div>
+        </div>
+    </div>
+
+    <!-- 我要贡献模态框 -->
+    <div id="contribModal" class="modal">
+        <div class="modal-content" style="max-width: 700px;">
+            <span class="modal-close" onclick="closeContribModal()">&times;</span>
+            <div id="contribModalBody"></div>
         </div>
     </div>
 
@@ -1259,7 +1343,26 @@
                     <div class="modal-value">${app.description}</div>
                 </div>
 
-                <button class="modal-btn" onclick="installApp('${app.id}')">🚀 一键安装</button>
+                <div class="modal-section">
+                    <div class="modal-label">安装到</div>
+                    <div class="install-grid">
+                        <div class="install-option" onclick="installTo('claude', '${app.id}')">
+                            <div class="install-option-icon">✨</div>
+                            <div class="install-option-name">Claude</div>
+                            <div class="install-option-desc">AI 智能助手</div>
+                        </div>
+                        <div class="install-option" onclick="installTo('chatgpt', '${app.id}')">
+                            <div class="install-option-icon">🤖</div>
+                            <div class="install-option-name">ChatGPT</div>
+                            <div class="install-option-desc">OpenAI 对话助手</div>
+                        </div>
+                        <div class="install-option" onclick="installTo('workbuddy', '${app.id}')">
+                            <div class="install-option-icon">🛠️</div>
+                            <div class="install-option-name">WorkBuddy</div>
+                            <div class="install-option-desc">办公智能体</div>
+                        </div>
+                    </div>
+                </div>
                 <button class="modal-btn secondary" onclick="downloadApp('${app.id}')">📥 下载压缩包</button>
             `;
 
@@ -1270,9 +1373,15 @@
             document.getElementById('modal').classList.remove('active');
         }
 
-        function installApp(appId) {
+        function installTo(platform, appId) {
             const app = allApps.find(a => a.id === appId);
-            alert(`✅ 安装成功！\n\n应用: ${app.display_name}\n\n（演示版本）`);
+            const platformNames = {
+                claude: 'Claude',
+                chatgpt: 'ChatGPT',
+                workbuddy: 'WorkBuddy'
+            };
+            const target = platformNames[platform] || '未知平台';
+            alert(`✅ 安装请求已发起\n\n应用: ${app.display_name}\n安装目标: ${target}\n\n（演示版本：将跳转至 ${target} 完成安装配置）`);
             closeModal();
         }
 
@@ -1662,6 +1771,87 @@
             document.getElementById('publishModal').classList.remove('active');
         }
 
+        // 我要贡献弹窗
+        function openContribModal() {
+            document.getElementById('contribModalBody').innerHTML = `
+                <div class="modal-header">🌟 我要贡献</div>
+
+                <div class="modal-section">
+                    <div class="modal-value">分享你的经验与心得，与大家共同进步。优质贡献将获得首页推荐位。</div>
+                </div>
+
+                <form class="publish-form" id="contribForm" onsubmit="handleContribute(event)">
+                    <div class="form-group">
+                        <label class="form-label">
+                            分享人姓名
+                            <span class="required">*</span>
+                        </label>
+                        <input type="text" class="form-input" id="contribName" placeholder="请输入你的姓名" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            贡献类型
+                            <span class="required">*</span>
+                        </label>
+                        <select class="form-select" id="contribType" required>
+                            <option value="">请选择贡献类型</option>
+                            <option value="Agent 使用经验">Agent 使用经验</option>
+                            <option value="Skill 使用经验">Skill 使用经验</option>
+                            <option value="实战案例">实战案例</option>
+                            <option value="踩坑心得">踩坑心得</option>
+                            <option value="其他">其他</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            分享标题
+                            <span class="required">*</span>
+                        </label>
+                        <input type="text" class="form-input" id="contribTitle" placeholder="一句话概括你的经验，如：用车型库专家快速生成对比报告" maxlength="50" required>
+                        <div class="form-hint">简洁明确的标题更容易被采纳</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            分享内容
+                            <span class="required">*</span>
+                        </label>
+                        <textarea class="form-textarea" id="contribContent" placeholder="详细描述你的经验、方法或成果，帮助大家快速上手" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">联系方式</label>
+                        <input type="text" class="form-input" id="contribContact" placeholder="飞书账号或邮箱（选填）">
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeContribModal()">取消</button>
+                        <button type="submit" class="btn btn-success">立即贡献</button>
+                    </div>
+                </form>
+            `;
+
+            document.getElementById('contribModal').classList.add('active');
+        }
+
+        function closeContribModal() {
+            document.getElementById('contribModal').classList.remove('active');
+        }
+
+        function handleContribute(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('contribName')?.value || '';
+            const type = document.getElementById('contribType')?.value || '';
+            const title = document.getElementById('contribTitle')?.value || '';
+
+            alert(`🎉 感谢你的贡献！\n\n分享人：${name}\n类型：${type}\n标题：${title}\n\n你的经验已提交，审核通过后将展示给大家。\n\n（演示版本）`);
+
+            closeContribModal();
+        }
+
         function selectIcon(icon) {
             selectedIcon = icon;
             document.getElementById('appIcon').value = icon;
@@ -1728,6 +1918,12 @@
         document.getElementById('publishModal').addEventListener('click', (e) => {
             if (e.target.id === 'publishModal') {
                 closePublishModal();
+            }
+        });
+
+        document.getElementById('contribModal').addEventListener('click', (e) => {
+            if (e.target.id === 'contribModal') {
+                closeContribModal();
             }
         });
 
