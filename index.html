@@ -312,6 +312,18 @@
         }
 
         /* 收藏区域 */
+        .collection-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .collection-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
         .collection-section {
             background: #ffffff;
             border: 1px solid #e8e8e8;
@@ -949,13 +961,21 @@
                 <div class="apps-grid" id="overviewSkillsGrid"></div>
             </section>
 
-            <!-- 我的收藏 -->
+            <!-- 我的收藏 / 我要贡献 -->
             <section>
-                <div class="collection-section">
-                    <div class="collection-icon">⭐</div>
-                    <h3 class="collection-title">我的收藏</h3>
-                    <p class="collection-desc">管理你收藏的技能和应用</p>
-                    <a href="javascript:void(0)" class="collection-btn">查看收藏</a>
+                <div class="collection-grid">
+                    <div class="collection-section">
+                        <div class="collection-icon">⭐</div>
+                        <h3 class="collection-title">我的收藏</h3>
+                        <p class="collection-desc">管理你收藏的技能和应用</p>
+                        <a href="javascript:void(0)" class="collection-btn">查看收藏</a>
+                    </div>
+                    <div class="collection-section">
+                        <div class="collection-icon">🌟</div>
+                        <h3 class="collection-title">我要贡献</h3>
+                        <p class="collection-desc">分享你的经验，与大家共同进步</p>
+                        <a href="javascript:void(0)" class="collection-btn contrib-btn" onclick="openContribModal()">立即贡献</a>
+                    </div>
                 </div>
             </section>
         </div>
