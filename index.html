@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SA Market - 智能销售创新平台</title>
+    <title>AutoCava Skills Market - AutoCava智能创新平台</title>
     <style>
         * {
             margin: 0;
@@ -790,7 +790,7 @@
 <body>
     <!-- 导航栏 -->
     <nav class="navbar">
-        <a href="javascript:void(0)" class="navbar-logo">SA Market</a>
+        <a href="javascript:void(0)" class="navbar-logo">AutoCava Skills Market</a>
         <ul class="navbar-menu">
             <li><a class="nav-tab active" data-tab="overview">总览</a></li>
             <li><a class="nav-tab" data-tab="agents">Agents</a></li>
@@ -804,9 +804,9 @@
     <div id="tab-overview" class="tab-content active">
         <!-- Banner -->
         <section class="banner">
-            <h1>智能销售创新平台</h1>
-            <p class="banner-subtitle">Be Proactive，Change the World.</p>
-            <p class="banner-slogan">智能销售助手，一站解决销售难题</p>
+            <h1>AutoCava智能创新平台</h1>
+            <p class="banner-subtitle">AutoCava Skills Market</p>
+            <p class="banner-slogan">智能AI插件/技能分享，一站解决工作难题</p>
         </section>
 
         <!-- 滚动标签 -->
@@ -814,11 +814,15 @@
             <div class="scrolling-container">
                 <!-- 第一行 -->
                 <div class="scrolling-row">
+                    <span class="scrolling-tag" onclick="handleTagClick('一键打通飞书文档')">如何使用一键打通飞书文档</span>
+                    <span class="scrolling-tag" onclick="handleTagClick('产品需求文档撰写')">如何使用产品需求文档撰写</span>
                     <span class="scrolling-tag" onclick="handleTagClick('客户意向分析')">如何使用客户意向分析</span>
                     <span class="scrolling-tag" onclick="handleTagClick('库存管理助手')">如何使用库存管理助手</span>
                     <span class="scrolling-tag" onclick="handleTagClick('智能报价计算')">如何使用智能报价计算</span>
                     <span class="scrolling-tag" onclick="handleTagClick('竞品对比分析')">如何使用竞品对比分析</span>
                     <!-- 重复实现无缝滚动 -->
+                    <span class="scrolling-tag" onclick="handleTagClick('一键打通飞书文档')">如何使用一键打通飞书文档</span>
+                    <span class="scrolling-tag" onclick="handleTagClick('产品需求文档撰写')">如何使用产品需求文档撰写</span>
                     <span class="scrolling-tag" onclick="handleTagClick('客户意向分析')">如何使用客户意向分析</span>
                     <span class="scrolling-tag" onclick="handleTagClick('库存管理助手')">如何使用库存管理助手</span>
                     <span class="scrolling-tag" onclick="handleTagClick('智能报价计算')">如何使用智能报价计算</span>
@@ -827,10 +831,12 @@
 
                 <!-- 第二行 -->
                 <div class="scrolling-row">
+                    <span class="scrolling-tag" onclick="handleTagClick('AC-UI 制作原型')">如何使用 AC-UI 制作原型</span>
                     <span class="scrolling-tag" onclick="handleTagClick('销售跟进助手')">如何使用销售跟进助手</span>
                     <span class="scrolling-tag" onclick="handleTagClick('话术生成器')">如何使用话术生成器</span>
                     <span class="scrolling-tag" onclick="handleTagClick('试驾预约')">如何使用试驾预约</span>
                     <!-- 重复实现无缝滚动 -->
+                    <span class="scrolling-tag" onclick="handleTagClick('AC-UI 制作原型')">如何使用 AC-UI 制作原型</span>
                     <span class="scrolling-tag" onclick="handleTagClick('销售跟进助手')">如何使用销售跟进助手</span>
                     <span class="scrolling-tag" onclick="handleTagClick('话术生成器')">如何使用话术生成器</span>
                     <span class="scrolling-tag" onclick="handleTagClick('试驾预约')">如何使用试驾预约</span>
@@ -838,10 +844,12 @@
 
                 <!-- 第三行 -->
                 <div class="scrolling-row">
+                    <span class="scrolling-tag" onclick="handleTagClick('一键打通WhatsApp')">如何使用一键打通WhatsApp</span>
                     <span class="scrolling-tag" onclick="handleTagClick('客户画像分析')">如何使用客户画像分析</span>
                     <span class="scrolling-tag" onclick="handleTagClick('销售漏斗分析')">如何使用销售漏斗分析</span>
                     <span class="scrolling-tag" onclick="handleTagClick('成交概率预测')">如何使用成交概率预测</span>
                     <!-- 重复实现无缝滚动 -->
+                    <span class="scrolling-tag" onclick="handleTagClick('一键打通WhatsApp')">如何使用一键打通WhatsApp</span>
                     <span class="scrolling-tag" onclick="handleTagClick('客户画像分析')">如何使用客户画像分析</span>
                     <span class="scrolling-tag" onclick="handleTagClick('销售漏斗分析')">如何使用销售漏斗分析</span>
                     <span class="scrolling-tag" onclick="handleTagClick('成交概率预测')">如何使用成交概率预测</span>
@@ -972,7 +980,7 @@
 
         <div class="container">
             <div class="login-box">
-                <div class="login-title">SA Market 登录</div>
+                <div class="login-title">AutoCava Skills Market 登录</div>
                 <form class="login-form" onsubmit="handleLogin(event)">
                     <input type="email" placeholder="飞书邮箱" required>
                     <input type="password" placeholder="密码" required>
@@ -1001,6 +1009,58 @@
     <script>
         // 演示数据
         const allApps = [
+            {
+                id: '7',
+                name: 'feishu-docs-bridge',
+                display_name: '一键打通飞书文档',
+                description: '一键将飞书云文档接入工作流，支持读取、创建、更新飞书文档内容，实现文档数据与 AI 插件无缝联动。',
+                type: 'skill',
+                category: '效率工具',
+                publisher_name: '刘一',
+                publisher_dept: 'AutoCava',
+                rating_avg: 4.9,
+                install_count: 187,
+                icon: '📄'
+            },
+            {
+                id: '8',
+                name: 'prd-writer',
+                display_name: '产品需求文档撰写',
+                description: '基于产品想法自动生成结构化 PRD，支持导出为本地 Office 文档和飞书文档，覆盖需求背景、功能说明、验收标准。',
+                type: 'skill',
+                category: '产品文档',
+                publisher_name: '陈二',
+                publisher_dept: 'AutoCava',
+                rating_avg: 4.8,
+                install_count: 243,
+                icon: '📝'
+            },
+            {
+                id: '9',
+                name: 'ac-ui-prototype',
+                display_name: 'AC-UI 制作原型',
+                description: '使用 AC-UI 设计体系快速制作高保真原型，内置组件库与设计规范，一键生成可交互的页面原型。',
+                type: 'skill',
+                category: '设计工具',
+                publisher_name: '吴三',
+                publisher_dept: 'AutoCava',
+                rating_avg: 4.7,
+                install_count: 156,
+                icon: '🎨'
+            },
+            {
+                id: '10',
+                name: 'whatsapp-connect',
+                display_name: '一键打通WhatsApp',
+                description: '快速接入 WhatsApp 消息通道，自动同步客户会话、发送营销消息与售后通知，打通全球客户沟通链。',
+                type: 'skill',
+                category: '沟通协作',
+                publisher_name: '郑四',
+                publisher_dept: 'AutoCava',
+                rating_avg: 4.8,
+                install_count: 132,
+                icon: '💬'
+            },
             {
                 id: '1',
                 name: 'customer-intent-demo',
@@ -1366,6 +1426,10 @@
                             <option value="数据分析">数据分析</option>
                             <option value="供应链">供应链</option>
                             <option value="销售管理">销售管理</option>
+                            <option value="效率工具">效率工具</option>
+                            <option value="产品文档">产品文档</option>
+                            <option value="设计工具">设计工具</option>
+                            <option value="沟通协作">沟通协作</option>
                             <option value="其他">其他</option>
                         </select>
                     </div>
